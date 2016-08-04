@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ .title }}</title>
+    </head>
+
+    <body>
+        <h1>GinT Test Application</h1>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/users">Users</a></li>
+        </ul>
+        {{ block "content" . }}{{ end }}
+    </body>
+</html>

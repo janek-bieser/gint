@@ -1,0 +1,8 @@
+{{ define "content" }}
+<h2>Users</h2>
+<ul>
+    {{ range $idx, $user := .users }}
+    <li><a href="/users/{{$idx}}">{{ $user.FirstName }} {{ $user.LastName }}</a></li>
+    {{ end }}
+</ul>
+{{ end }}
