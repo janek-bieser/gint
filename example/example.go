@@ -1,3 +1,4 @@
+// Package main is the example package.
 package main
 
 import (
@@ -16,8 +17,8 @@ type user struct {
 }
 
 var users = []user{
-	user{"Jack", "Sparrow", "jack.sparrow@pirates.com"},
-	user{"Spider", "Man", "spider.man@animals.com"},
+	{"Jack", "Sparrow", "jack.sparrow@pirates.com"},
+	{"Spider", "Man", "spider.man@animals.com"},
 }
 
 func main() {
