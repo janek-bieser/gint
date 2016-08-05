@@ -6,7 +6,7 @@
 GinT is an HTML template plug-in for the great
 [Gin](https://github.com/gin-gonic/gin) framework. It is somewhat
 opinionated about how templates are organized and rendered, but in
-exchange you wont have to write a lot of boilerplate code.
+exchange you won't have to write a lot of boilerplate code.
 
 ## Getting Started
 
