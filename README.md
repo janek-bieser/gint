@@ -1,5 +1,6 @@
 # GinT
 
+[![Build Status](https://travis-ci.org/janek-bieser/gint.svg?branch=master)](https://travis-ci.org/janek-bieser/gint)
 [![Go Report Card](https://goreportcard.com/badge/github.com/janek-bieser/gint)](https://goreportcard.com/report/github.com/janek-bieser/gint)
 
 GinT is an HTML template plug-in for the great
