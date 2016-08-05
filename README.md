@@ -18,8 +18,7 @@ func main() {
     r := gin.Default()
 
     // create the renderer and plug it into the gin framework
-    htmlRender := gint.NewHTMLRender()
-    r.HTMLRender = htmlRender
+    r.HTMLRender = gint.NewHTMLRender()
 
     r.GET("/", func(c *gin.Context){
         c.HTML(http.StatusOK, "home", gin.H{"title": "Test"})
@@ -75,3 +74,4 @@ block "content" . }}`
 
 - cache templates in release mode
 - document how partials work
+- write some tests

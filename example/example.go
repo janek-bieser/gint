@@ -24,8 +24,7 @@ func main() {
 	r := gin.Default()
 
 	// Set our custom HTMLRender
-	htmlRender := gint.NewHTMLRender()
-	r.HTMLRender = htmlRender
+	r.HTMLRender = gint.NewHTMLRender()
 
 	r.GET("/", homePage)
 	r.GET("/users", usersPage)
