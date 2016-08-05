@@ -19,9 +19,11 @@ const (
 )
 
 // HTMLRender is an implementation of the render.HTMLRender interface
-// defined by the gin framework.
+// defined by the gin framework. It holds information like the
+// location or file extension of your templates.
 type HTMLRender struct {
 	TemplateDir string
+	PartialsDir string
 	TemplateExt string
 	LayoutFile  string
 }
@@ -30,6 +32,7 @@ type HTMLRender struct {
 func NewHTMLRender() *HTMLRender {
 	return &HTMLRender{
 		TemplateDir: defaultTemplateDir,
+		PartialsDir: defaultPartialsDir,
 		TemplateExt: defaultTemplateExt,
 		LayoutFile:  defaultLayoutFile,
 	}
@@ -45,38 +48,38 @@ func (r *HTMLRender) Instance(name string, data interface{}) render.Render {
 }
 
 func (r *HTMLRender) loadTemplate(name string) (*template.Template, error) {
-	layoutContent, err := loadTemplateFile("layout")
+	layoutContent, err := r.loadTemplateFile("layout")
 	if err != nil {
 		panic(err)
 	}
 
 	tpl := template.Must(template.New("layout").Parse(layoutContent))
 
-	contentString, err := loadTemplateFile(name)
+	contentString, err := r.loadTemplateFile(name)
 	if err != nil {
 		panic(err)
 	}
 
 	template.Must(tpl.New("content").Parse(contentString))
-	addPartials(tpl)
+	r.addPartials(tpl)
 
 	return tpl, nil
 }
 
-func addPartials(tpl *template.Template) {
-	root, err := filepath.Glob(fmt.Sprintf("%s/*.%s", defaultPartialsDir, defaultTemplateExt))
+func (r *HTMLRender) addPartials(tpl *template.Template) {
+	root, err := filepath.Glob(fmt.Sprintf("%s/*.%s", r.PartialsDir, r.TemplateExt))
 	if err != nil {
 		panic(err)
 	}
 
-	subfolders, err := filepath.Glob(fmt.Sprintf("%s/**/*.%s", defaultPartialsDir, defaultTemplateExt))
+	subfolders, err := filepath.Glob(fmt.Sprintf("%s/**/*.%s", r.PartialsDir, r.TemplateExt))
 	if err != nil {
 		panic(err)
 	}
 
 	paths := append(root, subfolders...)
-	tplPrefix := defaultTemplateDir + "/"
-	tplSuffix := "." + defaultTemplateExt
+	tplPrefix := r.TemplateDir + "/"
+	tplSuffix := "." + r.TemplateExt
 
 	for _, path := range paths {
 		name := strings.TrimSuffix(strings.TrimPrefix(path, tplPrefix), tplSuffix)
@@ -90,8 +93,8 @@ func addPartials(tpl *template.Template) {
 	}
 }
 
-func loadTemplateFile(name string) (string, error) {
-	path := fmt.Sprintf("%s/%s.%s", defaultTemplateDir, name, defaultTemplateExt)
+func (r *HTMLRender) loadTemplateFile(name string) (string, error) {
+	path := fmt.Sprintf("%s/%s.%s", r.TemplateDir, name, r.TemplateExt)
 	bytes, err := ioutil.ReadFile(path)
 	return string(bytes), err
 }
