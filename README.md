@@ -67,8 +67,7 @@ templates is configurable (default is `tmpl`), so it could be called
 templateName, data)` on the `gin.Context` object, GinT will look
 inside the templates folder and render `templateName` inside your
 `layout`. In order for this to work, you have to render the content
-template inside your layout using `{{ template "content" . }}` or `{{
-block "content" . }}`
+template inside your layout using `{{ template "content" . }}`.
 
 ## TODO
 
