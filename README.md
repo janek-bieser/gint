@@ -70,3 +70,8 @@ inside the templates folder and render `templateName` inside your
 `layout`. In order for this to work, you have to render the content
 template inside your layout using `{{ template "content" . }}` or `{{
 block "content" . }}`
+
+## TODO
+
+- cache templates in release mode
+- document how partials work
