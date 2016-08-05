@@ -1,5 +1,7 @@
 # GinT
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/janek-bieser/gint)](https://goreportcard.com/report/github.com/janek-bieser/gint)
+
 GinT is an HTML template plug-in for the great
 [Gin](https://github.com/gin-gonic/gin) framework. It is somewhat
 opinionated about how templates are organized and rendered, but in
