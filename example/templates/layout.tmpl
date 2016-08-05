@@ -6,10 +6,10 @@
 
     <body>
         <h1>GinT Test Application</h1>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/users">Users</a></li>
-        </ul>
-        {{ block "content" . }}{{ end }}
+        {{ template "_partials/nav" . }}
+        <hr/>
+        {{ template "content" . }}
+        <hr/>
+        {{ template "_partials/footer" . }}
     </body>
 </html>

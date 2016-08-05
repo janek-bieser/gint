@@ -3,12 +3,17 @@ package gint
 import (
 	"fmt"
 	"html/template"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin/render"
 )
 
 const (
 	defaultTemplateDir string = "templates"
+	defaultPartialsDir string = "templates/_partials"
 	defaultTemplateExt string = "tmpl"
 	defaultLayoutFile  string = "layout"
 )
@@ -40,8 +45,53 @@ func (r *HTMLRender) Instance(name string, data interface{}) render.Render {
 }
 
 func (r *HTMLRender) loadTemplate(name string) (*template.Template, error) {
-	layoutPath := fmt.Sprintf("%s/%s.%s", defaultTemplateDir, r.LayoutFile, defaultTemplateExt)
-	path := fmt.Sprintf("%s/%s.%s", defaultTemplateDir, name, defaultTemplateExt)
+	layoutContent, err := loadTemplateFile("layout")
+	if err != nil {
+		panic(err)
+	}
 
-	return template.ParseFiles(layoutPath, path)
+	tpl := template.Must(template.New("layout").Parse(layoutContent))
+
+	contentString, err := loadTemplateFile(name)
+	if err != nil {
+		panic(err)
+	}
+
+	template.Must(tpl.New("content").Parse(contentString))
+	addPartials(tpl)
+
+	return tpl, nil
+}
+
+func addPartials(tpl *template.Template) {
+	root, err := filepath.Glob(fmt.Sprintf("%s/*.%s", defaultPartialsDir, defaultTemplateExt))
+	if err != nil {
+		panic(err)
+	}
+
+	subfolders, err := filepath.Glob(fmt.Sprintf("%s/**/*.%s", defaultPartialsDir, defaultTemplateExt))
+	if err != nil {
+		panic(err)
+	}
+
+	paths := append(root, subfolders...)
+	tplPrefix := defaultTemplateDir + "/"
+	tplSuffix := "." + defaultTemplateExt
+
+	for _, path := range paths {
+		name := strings.TrimSuffix(strings.TrimPrefix(path, tplPrefix), tplSuffix)
+		bytes, err := ioutil.ReadFile(path)
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		} else {
+			template.Must(tpl.New(name).Parse(string(bytes)))
+		}
+	}
+}
+
+func loadTemplateFile(name string) (string, error) {
+	path := fmt.Sprintf("%s/%s.%s", defaultTemplateDir, name, defaultTemplateExt)
+	bytes, err := ioutil.ReadFile(path)
+	return string(bytes), err
 }
