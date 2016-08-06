@@ -1,3 +1,5 @@
+// Package gint is an HTML Template plugin for the
+// Gin (https://godoc.org/github.com/gin-gonic/gin) framework.
 package gint
 
 import (
