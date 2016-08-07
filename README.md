@@ -1,6 +1,7 @@
 # GinT
 
 [![Build Status](https://travis-ci.org/janek-bieser/gint.svg?branch=master)](https://travis-ci.org/janek-bieser/gint)
+[![Coverage Status](https://coveralls.io/repos/github/janek-bieser/gint/badge.svg)](https://coveralls.io/github/janek-bieser/gint)
 [![Go Report Card](https://goreportcard.com/badge/github.com/janek-bieser/gint)](https://goreportcard.com/report/github.com/janek-bieser/gint)
 [![GoDoc](https://godoc.org/github.com/janek-bieser/gint?status.svg)](https://godoc.org/github.com/janek-bieser/gint)
 
