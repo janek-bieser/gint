@@ -56,6 +56,5 @@ func TestValidTemplateLoading(t *testing.T) {
 func newHTMLRenderForTesting(path string) *gint.HTMLRender {
 	r := gint.NewHTMLRender()
 	r.TemplateDir = "test_templates/" + path
-	r.PartialsDir = "test_templates/" + path
 	return r
 }

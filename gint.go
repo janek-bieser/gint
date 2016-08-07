@@ -15,7 +15,6 @@ import (
 
 const (
 	defaultTemplateDir string = "templates"
-	defaultPartialsDir string = "templates/_partials"
 	defaultTemplateExt string = "tmpl"
 	defaultLayoutFile  string = "layout"
 )
@@ -25,7 +24,6 @@ const (
 // location or file extension of your templates.
 type HTMLRender struct {
 	TemplateDir string
-	PartialsDir string
 	TemplateExt string
 	LayoutFile  string
 }
@@ -34,7 +32,6 @@ type HTMLRender struct {
 func NewHTMLRender() *HTMLRender {
 	return &HTMLRender{
 		TemplateDir: defaultTemplateDir,
-		PartialsDir: defaultPartialsDir,
 		TemplateExt: defaultTemplateExt,
 		LayoutFile:  defaultLayoutFile,
 	}
@@ -69,12 +66,12 @@ func (r *HTMLRender) loadTemplate(name string) (*template.Template, error) {
 }
 
 func (r *HTMLRender) addPartials(tpl *template.Template) {
-	root, err := filepath.Glob(fmt.Sprintf("%s/*.%s", r.PartialsDir, r.TemplateExt))
+	root, err := filepath.Glob(fmt.Sprintf("%s/_*.%s", r.TemplateDir, r.TemplateExt))
 	if err != nil {
 		panic(err)
 	}
 
-	subfolders, err := filepath.Glob(fmt.Sprintf("%s/**/*.%s", r.PartialsDir, r.TemplateExt))
+	subfolders, err := filepath.Glob(fmt.Sprintf("%s/**/_*.%s", r.TemplateDir, r.TemplateExt))
 	if err != nil {
 		panic(err)
 	}
