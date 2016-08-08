@@ -1,81 +1,78 @@
 package gint_test
 
 import (
-	"bytes"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 
 	"github.com/janek-bieser/gint"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestNonExistingLayoutFile(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic.")
-		}
-	}()
+var _ = Describe("HTMLRender", func() {
 
-	htmlRender := newHTMLRenderForTesting("no_layout")
-	htmlRender.Instance("index", nil)
-}
+	var (
+		htmlRender *gint.HTMLRender
+	)
 
-func TestInvalidTemplate(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic.")
-		}
-	}()
-
-	htmlRender := newHTMLRenderForTesting("only_layout")
-	// expect this to panic becuase the template does not exist
-	htmlRender.Instance("doesnotexist", nil)
-}
-
-func TestValidTemplateLoading(t *testing.T) {
-	htmlRender := newHTMLRenderForTesting("valid")
-	instance := htmlRender.Instance("index", map[string]string{
-		"title": "Hello, World",
+	BeforeEach(func() {
+		htmlRender = gint.NewHTMLRender()
 	})
-	res := httptest.NewRecorder()
-	instance.Render(res)
 
-	expectStatusCode(t, http.StatusOK, res.Code)
+	Context("Layout file does not exist", func() {
 
-	expectedResult := []byte("<h1>Hello, World</h1>\n<div>Index</div>")
-	resBytes := res.Body.Bytes()
+		BeforeEach(func() {
+			htmlRender.TemplateDir = "test_templates/no_layout"
+		})
 
-	if !bytes.Equal(expectedResult, resBytes) {
-		t.Errorf("Expected body to be: '%s' but got: '%s'",
-			string(expectedResult), string(resBytes))
-	}
-}
+		It("should panic when loading a template", func() {
+			f := func() { htmlRender.Instance("index", nil) }
+			Expect(f).To(Panic())
+		})
 
-func TestPartialsLoading(t *testing.T) {
-	htmlRender := newHTMLRenderForTesting("partials")
-	instance := htmlRender.Instance("index", map[string]string{"title": "Test"})
-	res := httptest.NewRecorder()
-	instance.Render(res)
+	})
 
-	expectStatusCode(t, http.StatusOK, res.Code)
+	Context("Template file does not exist", func() {
 
-	expectedResult := []byte("<h1>Test</h1>\n<div>Hello World</div>")
-	resBytes := res.Body.Bytes()
+		BeforeEach(func() {
+			htmlRender.TemplateDir = "test_templates/only_layout"
+		})
 
-	if !bytes.Equal(expectedResult, resBytes) {
-		t.Errorf("Expected body to be: '%s' but got: '%s'",
-			string(expectedResult), string(resBytes))
-	}
-}
+		It("should panic when loading non existing template", func() {
+			f := func() { htmlRender.Instance("index", nil) }
+			Expect(f).To(Panic())
+		})
 
-func newHTMLRenderForTesting(path string) *gint.HTMLRender {
-	r := gint.NewHTMLRender()
-	r.TemplateDir = "test_templates/" + path
-	return r
-}
+	})
 
-func expectStatusCode(t *testing.T, expected, actual int) {
-	if expected != actual {
-		t.Errorf("Expected status to be %d, but is %d.", expected, actual)
-	}
-}
+	Context("Valid template files exist", func() {
+
+		BeforeEach(func() {
+			htmlRender.TemplateDir = "test_templates/valid"
+		})
+
+		It("Should load the template without partials", func() {
+			instance := htmlRender.Instance("index", map[string]string{"title": "Hello, World"})
+			res := httptest.NewRecorder()
+			instance.Render(res)
+
+			Expect(res.Code).To(Equal(http.StatusOK))
+
+			expectedBody := "<h1>Hello, World</h1>\n<div>Index</div>"
+			Expect(res.Body.String()).To(Equal(expectedBody))
+		})
+
+		It("Should load the template with partials", func() {
+			instance := htmlRender.Instance("partials", map[string]string{"title": "Test"})
+			res := httptest.NewRecorder()
+			instance.Render(res)
+
+			Expect(res.Code).To(Equal(http.StatusOK))
+
+			expectedBody := "<h1>Test</h1>\n<div>Hello World</div>"
+			Expect(res.Body.String()).To(Equal(expectedBody))
+		})
+
+	})
+
+})
